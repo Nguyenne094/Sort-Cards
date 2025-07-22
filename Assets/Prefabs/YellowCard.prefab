@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -1618811761055556286}
   - component: {fileID: 5153899893034375222}
   m_Layer: 0
-  m_Name: RedCard
+  m_Name: YellowCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 594b8b65609a0c6499d3509c3d13a8bf, type: 2}
+  - {fileID: 2100000, guid: dc39e004f7d9d214a896ac56c0952e70, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91d0926582e51cd4fb42a60639a0ee49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _color: 0
+  _color: 5
 --- !u!114 &-1618811761055556286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09f83bc6a6edf484b84f4ea6ff5ed553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _poolTag: RedCard
+  _poolTag: YellowCard
 --- !u!114 &5153899893034375222
 MonoBehaviour:
   m_ObjectHideFlags: 0

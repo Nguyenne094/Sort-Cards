@@ -49,6 +49,20 @@ public class ObjectPool : Singleton<ObjectPool>
         }
     }
 
+    public PoolableObject GetObject<T>() where T : MonoBehaviour
+    {
+        for (int i = 0; i < poolableObjects.Count; i++)
+        {
+            var poolable = poolableObjects[i].GetComponent<PoolableObject>();
+            if (poolable != null && poolable.GetComponent<T>() != null)
+            {
+                return GetObject(poolable.PoolTag);
+            }
+        }
+        Debug.LogWarning($"No pool found for type: {typeof(T).Name}");
+        return null;
+    }
+
     public void ReleaseObject(string poolTag, PoolableObject obj)
     {
         if (pools.TryGetValue(poolTag, out var pool))

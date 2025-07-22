@@ -1,9 +1,10 @@
+using System;
 using NaughtyAttributes;
 using UnityEngine;
 
 public class ObjectGrid : MonoBehaviour
 {
-    [SerializeField] private GameObject cellPrefab;
+    [SerializeField] private GameObject _padPrefab;
     [SerializeField, Min(0)] private int _amount;
     [SerializeField, Min(0)] private int _columns;
     [SerializeField, Min(0)] private float _cellSize;
@@ -11,9 +12,13 @@ public class ObjectGrid : MonoBehaviour
     [SerializeField, Min(0)] private float _offsetY;
 
     private GameObject[,] grid;
+    private PadManager _padManager;
+
+    public Action<Pad> OnPadCreated;
 
     private void Start()
     {
+        _padManager = PadManager.Instance;
         CreateGrid();
     }
 
@@ -22,7 +27,7 @@ public class ObjectGrid : MonoBehaviour
     {
         ClearGrid();
 
-        if (_amount <= 0 || _columns <= 0 || cellPrefab == null)
+        if (_amount <= 0 || _columns <= 0 || _padPrefab == null)
         {
             return;
         }
@@ -42,21 +47,21 @@ public class ObjectGrid : MonoBehaviour
                     float yPos = ((rows - 1) / 2.0f - i) * (_cellSize + _offsetY);
                     Vector3 localPosition = new Vector3(xPos, yPos, 0);
 
-                    GameObject cell = Instantiate(cellPrefab, Vector3.zero, Quaternion.identity, transform);
-                    cell.transform.localPosition = localPosition;
-                    grid[i, j] = cell;
-                    if (cell.TryGetComponent(out CardStackPlacer stackPlacer))
+                    var padObject = ObjectPool.Instance.GetObject(_padPrefab.GetComponentInChildren<PoolableObject>().PoolTag).gameObject;
+                    padObject.transform.SetParent(transform);
+
+                    grid[i, j] = padObject;
+                    if (padObject.GetComponentInChildren<Pad>() is Pad pad)
                     {
-                        stackPlacer.LocalPosition = localPosition;
-                        stackPlacer.Index = new Vector2(i, j);
+                        padObject.transform.localPosition = localPosition;
+                        pad.Index = new Vector2(i, j);
+                        OnPadCreated?.Invoke(pad);
                     }
                     else
                     {
-
-                        cell.AddComponent<CardStackPlacer>().LocalPosition = localPosition;
-                        cell.GetComponent<CardStackPlacer>().Index = new Vector2(i, j);
+                        Debug.LogWarning($"Pad at ({i}, {j}) does not have a CardStackPlacer component.");
                     }
-                    cell.name = $"Cell {i * _columns + j + 1}";
+                    padObject.name = $"Pad {i * _columns + j + 1}";
                 }
             }
         }
@@ -70,21 +75,23 @@ public class ObjectGrid : MonoBehaviour
             return;
         }
 
-        foreach (GameObject cell in grid)
+        foreach (GameObject pab in grid)
         {
-            if (cell != null)
+            if (pab != null)
             {
                 if (Application.isPlaying)
                 {
-                    Destroy(cell);
+                    Destroy(pab);
                 }
                 else
                 {
-                    DestroyImmediate(cell);
+                    DestroyImmediate(pab);
                 }
             }
         }
 
         grid = null;
+        _padManager.Pads.Clear();
+        _padManager.UnlockedPads.Clear();
     }
 }
