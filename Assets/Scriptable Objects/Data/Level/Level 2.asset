@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab39480367d36bd4daec82af479e6221, type: 3}
+  m_Name: Level 2
+  m_EditorClassIdentifier: 
+  levelIndex: 2
+  levelName: "L\xE0m quen 2"
+  gridData: {fileID: 11400000, guid: ffe43c85044e8054295cb1a6fb9e696b, type: 2}
+  phases:
+  - phaseIndex: 0
+    unlockCost: 0
+    playPadIndexes:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    isActive: 0
+  - phaseIndex: 1
+    unlockCost: 50
+    playPadIndexes:
+    - {x: 1, y: 0}
+    - {x: 1, y: 1}
+    isActive: 1

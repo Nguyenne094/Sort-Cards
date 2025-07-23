@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2332949358033117061}
+  - component: {fileID: 1605216254609868408}
   - component: {fileID: 908989056630353329}
-  - component: {fileID: 596856302594350294}
-  - component: {fileID: 4058590560906825293}
+  - component: {fileID: 9157421102924092266}
   m_Layer: 8
-  m_Name: Pad
+  m_Name: ExchangePad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,20 +36,7 @@ Transform:
   - {fileID: 110946254976477316}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &908989056630353329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1813986084022908793}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09f83bc6a6edf484b84f4ea6ff5ed553, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _poolTag: Pad
---- !u!65 &596856302594350294
+--- !u!65 &1605216254609868408
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,13 +51,13 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.5063951, z: 0.20679694}
-  m_Center: {x: 0, y: 0.0022406876, z: 0}
---- !u!114 &4058590560906825293
+  m_Size: {x: 1, y: 1.5091882, z: 0.20923343}
+  m_Center: {x: 0, y: -0.0011732578, z: -0.0011732727}
+--- !u!114 &908989056630353329
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -79,11 +66,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1813986084022908793}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba596985da90cf74dbf8a79a6b7cc776, type: 3}
+  m_Script: {fileID: 11500000, guid: 09f83bc6a6edf484b84f4ea6ff5ed553, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _poolTag: CashExchangePad
+--- !u!114 &9157421102924092266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1813986084022908793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6afb930e1df3a434987b988776a10035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cardStackHolder: {fileID: 2773303900725112228}
   padObject: {fileID: 110946254976477316}
+  cardsRequiredForExchange: 10
+  cashPerCard: 1
 --- !u!1 &6435354580587956362
 GameObject:
   m_ObjectHideFlags: 0

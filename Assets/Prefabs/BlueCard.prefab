@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 4663924953722725463}
   - component: {fileID: 7959844925593343539}
   - component: {fileID: 7323431104237344438}
-  - component: {fileID: 8596500474947345355}
   - component: {fileID: -1618811761055556286}
   - component: {fileID: 5153899893034375222}
+  - component: {fileID: 4843361343339151245}
   m_Layer: 0
   m_Name: BlueCard
   m_TagString: Untagged
@@ -111,19 +111,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8596500474947345355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1432420544344483422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91d0926582e51cd4fb42a60639a0ee49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _color: 1
 --- !u!114 &-1618811761055556286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,3 +168,16 @@ MonoBehaviour:
     - {x: 0.57735026, y: 0.57735026, z: -0.57735026}
     - {x: 0.57735026, y: 0.57735026, z: 0.57735026}
     - {x: 0.57735026, y: -0.57735026, z: 0.57735026}
+--- !u!114 &4843361343339151245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432420544344483422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24747306036517045937a8c7befdda62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _color: 1

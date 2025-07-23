@@ -3,9 +3,7 @@ using UnityEngine;
 public class CashManager : Singleton<CashManager>
 {
     [SerializeField] private int _totalCash = 0;
-
     public int TotalCash => _totalCash;
-
     private const string TotalCashKey = "TotalCash";
 
     protected override void Awake()
@@ -33,10 +31,20 @@ public class CashManager : Singleton<CashManager>
         PlayerPrefs.Save();
     }
 
-    public void ResetCash()
+    public void SetCash(int amount)
     {
-        _totalCash = 0;
+        _totalCash = amount;
         PlayerPrefs.SetInt(TotalCashKey, _totalCash);
         PlayerPrefs.Save();
+    }
+
+    public bool TryPay(int amount)
+    {
+        if (_totalCash >= amount)
+        {
+            SubtractCash(amount);
+            return true;
+        }
+        return false;
     }
 }
