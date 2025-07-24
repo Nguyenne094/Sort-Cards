@@ -56,7 +56,7 @@ public class LevelManager : Singleton<LevelManager>
         if (PadManager.Instance != null)
         {
             PadManager.Instance.OnPhaseCompleted += HandlePhaseCompleted;
-            PadManager.Instance.OnAllPadsUnlocked += HandleAllPadsUnlocked;
+            PadManager.Instance.OnAllPadsPaid += HandleAllPadsPaid;
         }
 
         if (nextLevelButton != null)
@@ -75,7 +75,7 @@ public class LevelManager : Singleton<LevelManager>
         if (PadManager.Instance != null)
         {
             PadManager.Instance.OnPhaseCompleted -= HandlePhaseCompleted;
-            PadManager.Instance.OnAllPadsUnlocked -= HandleAllPadsUnlocked;
+            PadManager.Instance.OnAllPadsPaid -= HandleAllPadsPaid;
         }
 
         if (nextLevelButton != null)
@@ -95,9 +95,9 @@ public class LevelManager : Singleton<LevelManager>
         ActivateNextPhase();
     }
 
-    private void HandleAllPadsUnlocked()
+    private void HandleAllPadsPaid()
     {
-        Debug.Log("All pads unlocked! Level completed!");
+        Debug.Log("All pads paid! Level completed!");
         OnLevelCompleted?.Invoke();
         completedPanel.gameObject.SetActive(true);
     }
@@ -242,6 +242,7 @@ public class LevelManager : Singleton<LevelManager>
         // Start with first phase
         ActivatePhase(0);
         UnlockAllPadsOfPhase(0);
+        PayAllPadsOfPhase(0);
 
         // Set costs for pads based on phase configuration
         SetCostForPads();
@@ -284,6 +285,25 @@ public class LevelManager : Singleton<LevelManager>
             if (pad is PlayPad playPad && playPad.IsLocked)
             {
                 PadManager.Instance.UnlockPad(playPad);
+            }
+        }
+    }
+
+    private void PayAllPadsOfPhase(int phaseIndex)
+    {
+        if (CurrentLevel?.phases == null || phaseIndex < 0 || phaseIndex >= CurrentLevel.phases.Length)
+        {
+            Debug.LogWarning($"Invalid phase index: {phaseIndex} to pay pads");
+            return;
+        }
+
+        var phase = CurrentLevel.phases[phaseIndex];
+        foreach (var padIndex in phase.playPadIndexes)
+        {
+            var pad = PadManager.Instance.GetPadByIndex(padIndex);
+            if (pad is PlayPad playPad && playPad.IsLocked)
+            {
+                PadManager.Instance.PayPad(playPad);
             }
         }
     }

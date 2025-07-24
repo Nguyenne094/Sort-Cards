@@ -22,8 +22,8 @@ MonoBehaviour:
     - {x: 0, y: 0}
     - {x: 0, y: 1}
     - {x: 0, y: 2}
-    isActive: 1
-  - phaseIndex: 1
+    isActive: 0
+  - phaseIndex: 0
     unlockCost: 10
     playPadIndexes:
     - {x: 1, y: 0}

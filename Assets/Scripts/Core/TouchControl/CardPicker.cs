@@ -42,15 +42,24 @@ public class CardPicker : MonoBehaviour
     public void PickPad()
     {
         var pad = _touchController.GetObjectWithType<Pad>();
-        if (pad == null || _isDealing) return;
+        if (pad == null || pad.IsWorking || _isDealing) return;
 
         Debug.Log("Selected pad: " + pad.name);
-        // Pad is locked -> try to pay
-        if (pad is PlayPad playpad && playpad.IsLocked)
+        PlayPad playpad = null;
+
+        if (pad is PlayPad)
         {
-            if (CashManager.Instance.TryPay(playpad.UnlockCost))
+            playpad = (PlayPad)pad;
+            if (playpad.IsLocked) return;
+        }
+
+
+        // Pad is not paid -> try to pay
+        if (playpad != null && !playpad.IsPaid)
+        {
+            if (PadManager.Instance.TryPayPadByCash(playpad))
             {
-                PadManager.Instance.UnlockPad(playpad);
+                return;
             }
             else
             {
@@ -244,6 +253,7 @@ public class CardPicker : MonoBehaviour
         if (_currentPad != null)
         {
             _currentPad.IsHoldingStack = false;
+            _currentPad.IsWorking = false;
             _currentPad = null;
         }
 

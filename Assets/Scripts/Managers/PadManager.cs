@@ -7,6 +7,7 @@ public class PadManager : Singleton<PadManager>
 {
     [SerializeField] private List<PlayPad> pads = new();
     [SerializeField] private List<PlayPad> unlockedPads = new();
+    [SerializeField] private List<PlayPad> paidPads = new();
 
     [SerializeField] private Transform cardTable;
     [SerializeField] private Transform cashExchangeTable;
@@ -15,10 +16,12 @@ public class PadManager : Singleton<PadManager>
     public Transform CashExchangeTable => cashExchangeTable;
     public List<PlayPad> Pads => pads;
     public List<PlayPad> UnlockedPads => unlockedPads;
+    public List<PlayPad> PaidPads => paidPads;
 
     public Action<PlayPad> OnPadUnlocked;
+    public Action<PlayPad> OnPadPaid;
     public Action<int> OnPhaseCompleted;
-    public Action OnAllPadsUnlocked;
+    public Action OnAllPadsPaid;
 
     public void RegisterPad(PlayPad pad)
     {
@@ -36,30 +39,43 @@ public class PadManager : Singleton<PadManager>
         }
     }
 
-    public bool TryUnlockPadByCash(PlayPad pad)
+    public bool TryPayPadByCash(PlayPad pad)
     {
-        if (pad == null || !pad.IsLocked || unlockedPads.Contains(pad))
+        if (pad == null || pad.IsLocked || !unlockedPads.Contains(pad))
+        {
+            Debug.LogWarning($"Pad {pad?.name} is either null, locked, or not unlocked.");
             return false;
+        }
         if (!CashManager.Instance.TryPay(pad.UnlockCost))
             return false;
-        UnlockPad(pad);
+        PayPad(pad);
         return true;
+    }
+
+    public void PayPad(PlayPad pad)
+    {
+        if (pad == null || !unlockedPads.Contains(pad) || paidPads.Contains(pad)) return;
+        pad.Pay();
+        paidPads.Add(pad);
+        OnPadPaid?.Invoke(pad);
+        CheckCurrentPhaseCompletion();
+        if (paidPads.Count == pads.Count)
+            OnAllPadsPaid?.Invoke();
     }
 
     public void UnlockPad(PlayPad pad)
     {
         if (pad == null || unlockedPads.Contains(pad)) return;
-        unlockedPads.Add(pad);
         pad.Unlock();
+        unlockedPads.Add(pad);
         OnPadUnlocked?.Invoke(pad);
-        CheckCurrentPhaseCompletion();
         if (unlockedPads.Count == pads.Count)
-            OnAllPadsUnlocked?.Invoke();
+            OnPadUnlocked?.Invoke(pad);
     }
 
     public PlayPad GetPadByIndex(Vector2 index)
     {
-        return pads.FirstOrDefault(p => p.Index == index);
+        return pads.FirstOrDefault(p => Equals(p.Index, index));
     }
 
     private void CheckCurrentPhaseCompletion()
@@ -69,8 +85,10 @@ public class PadManager : Singleton<PadManager>
         int currentPhaseIndex = levelManager.GetCurrentPhaseIndex();
         var currentPhase = levelManager.CurrentLevel.GetPhase(currentPhaseIndex);
         if (currentPhase == null) return;
+        currentPhase.GetAllPadIndexes().ForEach(idx => Debug.Log($"Pad Index: {idx}"));
         bool allUnlocked = currentPhase.GetAllPadIndexes().All(idx =>
-            unlockedPads.Any(p => p.Index == idx));
+            paidPads.Any(p => Equals(p.Index, idx)) ||
+            unlockedPads.Any(p => Equals(p.Index, idx)));
         if (allUnlocked)
             OnPhaseCompleted?.Invoke(currentPhaseIndex);
     }
@@ -88,6 +106,7 @@ public class PadManager : Singleton<PadManager>
     {
         pads.Clear();
         unlockedPads.Clear();
+        paidPads.Clear();
         var cashExchangeGrid = cashExchangeTable.GetComponent<ObjectGrid>();
         foreach (var pad in cashExchangeGrid.GetComponentsInChildren<Pad>())
         {

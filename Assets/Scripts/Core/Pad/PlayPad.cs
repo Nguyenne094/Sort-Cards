@@ -21,22 +21,57 @@ public class PlayPad : Pad
         }
     }
     public int UnlockCost { get; set; }
+    public bool IsPaid
+    {
+        get
+        {
+            return _isPaid;
+        }
+        private set
+        {
+            if (value && IsLocked)
+            {
+                Debug.LogWarning("Cannot set IsPaid to true while the pad is locked.");
+                return;
+            }
+
+            _isPaid = value;
+
+            if (value)
+            {
+                SetPaidVisual();
+            }
+            else
+            {
+                SetNotPaidVisual();
+            }
+        }
+    }
 
     private bool _isLocked = true;
+    private bool _isPaid = false;
 
     private void Awake()
     {
         SetLockedVisual();
+        SetNotPaidVisual();
     }
 
     public void Unlock()
     {
+        Debug.Log("Unlocking pad: " + name);
         IsLocked = false;
     }
 
-    public void Setup(int unlockCost)
+    public void Pay()
     {
-        UnlockCost = unlockCost;
+        if (IsLocked)
+        {
+            Debug.LogWarning("Cannot pay for a locked pad.");
+            return;
+        }
+
+        IsPaid = true;
     }
 
     private void SetLockedVisual()
@@ -46,5 +81,15 @@ public class PlayPad : Pad
     private void SetUnlockedVisual()
     {
         lockedVisual.SetActive(false);
+    }
+
+    private void SetPaidVisual()
+    {
+        padObject.GetComponent<Renderer>().material.color = Color.green;
+    }
+
+    private void SetNotPaidVisual()
+    {
+        padObject.GetComponent<Renderer>().material.color = Color.red;
     }
 }

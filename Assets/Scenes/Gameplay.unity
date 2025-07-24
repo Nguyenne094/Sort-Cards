@@ -1843,6 +1843,7 @@ MonoBehaviour:
   _flipCardAudioSource: {fileID: 1103585353}
   _cardExchangeAudioSource: {fileID: 1667222813}
   _wrongPadAudioClip: {fileID: 8300000, guid: ee1de7e4892218c43b70b3db9b6ee846, type: 3}
+  _cantPayAudioClip: {fileID: 8300000, guid: a1690aca7eade164da43a69eb4e4d348, type: 3}
   _volume: 0.5
 --- !u!4 &1409308154 stripped
 Transform:
