@@ -312,7 +312,6 @@ public class LevelManager : Singleton<LevelManager>
         if (CurrentLevel == null) return;
 
         // Reset managers
-        CashManager.Instance.SetCash(0);
         PadManager.Instance.ResetForNewLevel();
 
         // Clear grids

@@ -1,13 +1,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CandyCoded.HapticFeedback;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(TouchController))]
 public class CardPicker : MonoBehaviour
 {
+    [Header("Card Picker Settings")]
     [SerializeField] private float _exchangeSpeed = 5f;
+    [SerializeField] private AudioSource _flipCardAudioSource;
+    [SerializeField] private AudioSource _cardExchangeAudioSource;
+    [SerializeField] private AudioClip _wrongPadAudioClip;
+    [SerializeField] private AudioClip _cantPayAudioClip;
+    
+    [SerializeField, Range(0f, 1f)] private float _volume = 0.5f;
+
     private TouchController _touchController;
     private Pad _currentPad;
     private bool _isDealing = false;
@@ -45,12 +54,12 @@ public class CardPicker : MonoBehaviour
             }
             else
             {
-                Debug.Log("Not enough cash to unlock pad: " + playpad.name);
                 if (_currentPad != null && _currentPad != playpad)
                 {
                     _currentPad.IsHoldingStack = false;
                     _currentPad = null;
                 }
+                SoundManager.Instance.PlaySFX(_cantPayAudioClip);
                 StartCoroutine(ShakePad(playpad));
             }
             return;
@@ -159,6 +168,12 @@ public class CardPicker : MonoBehaviour
     {
         if (card == null || targetPad == null) yield break;
 
+        if (_flipCardAudioSource?.isPlaying == false)
+        {
+            _flipCardAudioSource.volume = _volume;
+            _flipCardAudioSource.Play();
+        }
+
         Vector3 startPos = card.transform.position;
         Vector3 endPos = targetPad.GetPositionToAdd(card.transform);
         Vector3 targetLocalPosition = targetPad.GetPositionToAdd(card.transform, false);
@@ -189,11 +204,19 @@ public class CardPicker : MonoBehaviour
         card.transform.localPosition = targetLocalPosition;
         card.transform.localRotation = Quaternion.identity;
         targetPad.PushCardWithoutCreate(card);
+
+        if (_flipCardAudioSource?.isPlaying == true)
+        {
+            _flipCardAudioSource.volume = _volume;
+            _flipCardAudioSource.Stop();
+        }
     }
 
     private IEnumerator StacksAreDifferentColor(Pad from, Pad to)
     {
         from.IsHoldingStack = false;
+        SoundManager.Instance.PlaySFX(_wrongPadAudioClip, _volume);
+        HapticFeedback.LightFeedback();
         yield return StartCoroutine(ShakePad(to));
     }
 
@@ -210,6 +233,12 @@ public class CardPicker : MonoBehaviour
         if (_isDealing) yield break;
 
         _isDealing = true;
+
+        if (_flipCardAudioSource?.isPlaying == false)
+        {
+            _flipCardAudioSource.volume = _volume;
+            _flipCardAudioSource.Play();
+        }
 
         // If Player is picking cards, stop it
         if (_currentPad != null)
@@ -235,6 +264,13 @@ public class CardPicker : MonoBehaviour
             }
             yield return null;
         }
+
+        if (_flipCardAudioSource?.isPlaying == true)
+        {
+            _flipCardAudioSource.volume = _volume;
+            _flipCardAudioSource.Stop();
+        }
+
         _isDealing = false;
     }
 
@@ -286,8 +322,20 @@ public class CardPicker : MonoBehaviour
         {
             var card = pad.PopCardWithoutDestroy();
             if (card == null) break;
+            if (_cardExchangeAudioSource?.isPlaying == false)
+            {
+                _cardExchangeAudioSource.volume = _volume;
+                _cardExchangeAudioSource.Play();
+            }
+
             exchangedCount++;
             yield return StartCoroutine(ScaleDown(card));
+
+            if (_cardExchangeAudioSource?.isPlaying == true)
+            {
+                _cardExchangeAudioSource.volume = _volume;
+                _cardExchangeAudioSource.Stop();
+            }
         }
         pad.OnAllCardsExchanged?.Invoke(pad, exchangedCount);
     }

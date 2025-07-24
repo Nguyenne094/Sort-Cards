@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GridData 2
   m_EditorClassIdentifier: 
   Amount: 8
-  Columns: 4
+  Columns: 3
   CellSize: 1
   OffsetX: 1
   OffsetY: 1

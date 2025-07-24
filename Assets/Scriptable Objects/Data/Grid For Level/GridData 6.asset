@@ -15,5 +15,5 @@ MonoBehaviour:
   Amount: 12
   Columns: 4
   CellSize: 1
-  OffsetX: 1
+  OffsetX: 0
   OffsetY: 1

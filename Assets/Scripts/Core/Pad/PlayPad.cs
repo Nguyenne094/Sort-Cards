@@ -2,8 +2,27 @@ using UnityEngine;
 
 public class PlayPad : Pad
 {
-    public bool IsLocked { get; private set; } = true;
+    [SerializeField] private GameObject lockedVisual;
+
+    public bool IsLocked
+    {
+        get => _isLocked;
+        private set
+        {
+            _isLocked = value;
+            if (_isLocked)
+            {
+                SetLockedVisual();
+            }
+            else
+            {
+                SetUnlockedVisual();
+            }
+        }
+    }
     public int UnlockCost { get; set; }
+
+    private bool _isLocked = true;
 
     private void Awake()
     {
@@ -13,7 +32,6 @@ public class PlayPad : Pad
     public void Unlock()
     {
         IsLocked = false;
-        SetUnlockedVisual();
     }
 
     public void Setup(int unlockCost)
@@ -23,12 +41,10 @@ public class PlayPad : Pad
 
     private void SetLockedVisual()
     {
-        if (padObject && padObject.TryGetComponent(out Renderer renderer))
-            renderer.material.color = Color.gray;
+        lockedVisual.SetActive(true);
     }
     private void SetUnlockedVisual()
     {
-        if (padObject && padObject.TryGetComponent(out Renderer renderer))
-            renderer.material.color = Color.white;
+        lockedVisual.SetActive(false);
     }
 }
