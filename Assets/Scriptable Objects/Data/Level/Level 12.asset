@@ -10,25 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab39480367d36bd4daec82af479e6221, type: 3}
-  m_Name: Level 2
+  m_Name: Level 12
   m_EditorClassIdentifier: 
-  levelIndex: 2
-  levelName: "L\xE0m quen 2"
-  gridData: {fileID: 11400000, guid: ffe43c85044e8054295cb1a6fb9e696b, type: 2}
+  levelIndex: 3
+  levelName: "L\xE0m quen 3"
+  gridData: {fileID: 11400000, guid: 3953ee24cca4432438f274aae324f760, type: 2}
   phases:
   - phaseIndex: 0
     unlockCost: 0
     playPadIndexes:
     - {x: 0, y: 0}
     - {x: 0, y: 1}
+    - {x: 0, y: 2}
     isActive: 0
-  - phaseIndex: 1
-    unlockCost: 20
-    playPadIndexes:
-    - {x: 1, y: 0}
-    isActive: 1
   - phaseIndex: 1
     unlockCost: 30
     playPadIndexes:
+    - {x: 1, y: 0}
     - {x: 1, y: 1}
     isActive: 1
