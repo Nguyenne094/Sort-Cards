@@ -13,13 +13,17 @@ public class ObjectGrid : MonoBehaviour
     private PadManager _padManager;
 
     public Action<PlayPad> OnPlayPadCreated;
+    public Action OnGridCreationComplete;
     public GameObject[,] Grid => grid;
     public bool GridForPlayPad => _padPrefab != null && _padPrefab.GetComponentInChildren<PlayPad>() != null;
 
-    private void Start()
+    private void Awake()
     {
         _padManager = PadManager.Instance;
-        CreateGrid();
+    }
+
+    private void Start() {
+        if (!GridForPlayPad) CreateGrid();
     }
 
     [Button]
@@ -75,6 +79,8 @@ public class ObjectGrid : MonoBehaviour
                 }
             }
         }
+        
+        if (GridForPlayPad) OnGridCreationComplete?.Invoke();
     }
 
     [Button]

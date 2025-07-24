@@ -54,9 +54,11 @@ public class PadManager : Singleton<PadManager>
 
     public void PayPad(PlayPad pad)
     {
+        Debug.Log($"Paying for pad: {pad.name}");
         if (pad == null || !unlockedPads.Contains(pad) || paidPads.Contains(pad)) return;
         pad.Pay();
         paidPads.Add(pad);
+        Debug.Log(paidPads.Contains(pad));
         OnPadPaid?.Invoke(pad);
         CheckCurrentPhaseCompletion();
         if (paidPads.Count == pads.Count)
@@ -86,10 +88,10 @@ public class PadManager : Singleton<PadManager>
         var currentPhase = levelManager.CurrentLevel.GetPhase(currentPhaseIndex);
         if (currentPhase == null) return;
         currentPhase.GetAllPadIndexes().ForEach(idx => Debug.Log($"Pad Index: {idx}"));
-        bool allUnlocked = currentPhase.GetAllPadIndexes().All(idx =>
-            paidPads.Any(p => Equals(p.Index, idx)) ||
-            unlockedPads.Any(p => Equals(p.Index, idx)));
-        if (allUnlocked)
+        bool allPaid = currentPhase.GetAllPadIndexes().All(idx =>
+            paidPads.Any(p => Equals(p.Index, idx)));
+
+        if (allPaid)
             OnPhaseCompleted?.Invoke(currentPhaseIndex);
     }
 

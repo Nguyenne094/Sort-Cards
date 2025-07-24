@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using NaughtyAttributes;
 using UnityEngine;
@@ -33,13 +34,14 @@ public class LevelManager : Singleton<LevelManager>
 
     #region Unity Lifecycle
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake(); 
         cardTable = PadManager.Instance.CardTable.GetComponent<ObjectGrid>();
         cashExchangeTable = PadManager.Instance.CashExchangeTable.GetComponent<ObjectGrid>();
 
-        LoadLevel(0);
         SubscribeToEvents();
+        LoadLevel(0);
     }
 
     private void OnDestroy()
@@ -59,6 +61,11 @@ public class LevelManager : Singleton<LevelManager>
             PadManager.Instance.OnAllPadsPaid += HandleAllPadsPaid;
         }
 
+        if (cardTable != null)
+        {
+            cardTable.OnGridCreationComplete += HandleGridCreationComplete;
+        }
+
         if (nextLevelButton != null)
         {
             nextLevelButton.onClick.AddListener(LoadNextLevel);
@@ -76,6 +83,11 @@ public class LevelManager : Singleton<LevelManager>
         {
             PadManager.Instance.OnPhaseCompleted -= HandlePhaseCompleted;
             PadManager.Instance.OnAllPadsPaid -= HandleAllPadsPaid;
+        }
+
+        if (cardTable != null)
+        {
+            cardTable.OnGridCreationComplete -= HandleGridCreationComplete;
         }
 
         if (nextLevelButton != null)
@@ -100,6 +112,16 @@ public class LevelManager : Singleton<LevelManager>
         Debug.Log("All pads paid! Level completed!");
         OnLevelCompleted?.Invoke();
         completedPanel.gameObject.SetActive(true);
+    }
+
+    private void HandleGridCreationComplete()
+    {
+        // This is called after all pads are created and registered
+        Debug.Log("Grid creation complete. Setting up phase 0.");
+        ActivatePhase(0);
+        SetCostForPads();
+        UnlockAllPadsOfPhase(0);
+        PayAllPadsOfPhase(0);
     }
 
     #endregion
@@ -142,6 +164,8 @@ public class LevelManager : Singleton<LevelManager>
         // Activate target phase
         var targetPhase = CurrentLevel.phases[phaseIndex];
         targetPhase.isActive = true;
+
+        UnlockAllPadsOfPhase(phaseIndex);
 
         OnPhaseActivated?.Invoke(phaseIndex);
         Debug.Log($"Activated Phase {phaseIndex}");
@@ -235,17 +259,9 @@ public class LevelManager : Singleton<LevelManager>
             return;
         }
 
-        // Setup grids
+        // Setup grids - this will trigger the OnGridCreationComplete event when done
         cardTable.GridDataSO = CurrentLevel.gridData;
         cardTable.CreateGrid();
-
-        // Start with first phase
-        ActivatePhase(0);
-        UnlockAllPadsOfPhase(0);
-        PayAllPadsOfPhase(0);
-
-        // Set costs for pads based on phase configuration
-        SetCostForPads();
     }
 
     private void SetCostForPads()
@@ -301,7 +317,7 @@ public class LevelManager : Singleton<LevelManager>
         foreach (var padIndex in phase.playPadIndexes)
         {
             var pad = PadManager.Instance.GetPadByIndex(padIndex);
-            if (pad is PlayPad playPad && playPad.IsLocked)
+            if (pad is PlayPad playPad && !playPad.IsPaid)
             {
                 PadManager.Instance.PayPad(playPad);
             }

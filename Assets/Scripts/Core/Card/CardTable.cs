@@ -11,13 +11,10 @@ public class CardTable : MonoBehaviour
     {
         _objectGrid = GetComponent<ObjectGrid>();
         _padManager = PadManager.Instance;
-    }
-
-    private void OnEnable() {
         _objectGrid.OnPlayPadCreated += SyncPadManager;
     }
 
-    private void OnDisable() {
+    private void OnDestroy() {
         _objectGrid.OnPlayPadCreated -= SyncPadManager;
     }
 

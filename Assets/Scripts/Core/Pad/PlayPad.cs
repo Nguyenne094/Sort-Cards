@@ -1,8 +1,13 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayPad : Pad
 {
-    [SerializeField] private GameObject lockedVisual;
+    [Header("PlayPad Settings")]
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private Image lockedVisual;
+    [SerializeField] private TMP_Text costText;
 
     public bool IsLocked
     {
@@ -10,7 +15,7 @@ public class PlayPad : Pad
         private set
         {
             _isLocked = value;
-            if (_isLocked)
+            if (value)
             {
                 SetLockedVisual();
             }
@@ -53,6 +58,7 @@ public class PlayPad : Pad
 
     private void Awake()
     {
+        canvas.worldCamera = Camera.main;
         SetLockedVisual();
         SetNotPaidVisual();
     }
@@ -61,6 +67,7 @@ public class PlayPad : Pad
     {
         Debug.Log("Unlocking pad: " + name);
         IsLocked = false;
+        SetNotPaidVisual();
     }
 
     public void Pay()
@@ -76,20 +83,31 @@ public class PlayPad : Pad
 
     private void SetLockedVisual()
     {
-        lockedVisual.SetActive(true);
+        lockedVisual.gameObject.SetActive(true);
     }
     private void SetUnlockedVisual()
     {
-        lockedVisual.SetActive(false);
+        lockedVisual.gameObject.SetActive(false);
     }
 
     private void SetPaidVisual()
     {
-        padObject.GetComponent<Renderer>().material.color = Color.green;
+        costText.gameObject.SetActive(false);
     }
 
     private void SetNotPaidVisual()
     {
-        padObject.GetComponent<Renderer>().material.color = Color.red;
+        if (IsLocked)
+        {
+            costText.gameObject.SetActive(false);
+            return;
+        }
+        costText.gameObject.SetActive(true);
+        SetCostText(UnlockCost);
+    }
+
+    public void SetCostText(int cost)
+    {
+        costText.text = cost + "$";
     }
 }

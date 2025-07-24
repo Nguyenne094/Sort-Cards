@@ -186,23 +186,29 @@ public class CardPicker : MonoBehaviour
         Vector3 startPos = card.transform.position;
         Vector3 endPos = targetPad.GetPositionToAdd(card.transform);
         Vector3 targetLocalPosition = targetPad.GetPositionToAdd(card.transform, false);
+        Vector3 startRotation = card.transform.localRotation.eulerAngles;
+        Vector3 endRotation = targetPad.PadObject.transform.localRotation.eulerAngles;
 
-        float duration = 0.2f;
+        float duration = .3f;
         float elapsed = 0f;
         float amplitude = 3f;
+
+        bool moveUp = endPos.y > startPos.y;
 
         while (elapsed < duration)
         {
             float t = elapsed / duration;
             Vector3 linearPos = Vector3.Lerp(startPos, endPos, t);
+            Vector3 linearRotation = Vector3.Lerp(startRotation, endRotation, t);
+            float curveRotationX = Mathf.Lerp(startRotation.x, moveUp ? endRotation.x + 180 : endRotation.x - 180, t);
 
             float sinOffset = Mathf.Sin(t * Mathf.PI) * amplitude; // PI equal to half a circle
 
             Vector3 curvedPos = linearPos - new Vector3(0, 0, sinOffset);
-            float curveRotationX = card.transform.localRotation.eulerAngles.x + t * 180f;
+            Vector3 curvedRotation = linearRotation - new Vector3(curveRotationX, 0, 0);
 
             card.transform.position = curvedPos;
-            card.transform.localRotation = Quaternion.Euler(curveRotationX, 0, 0);
+            card.transform.localRotation = Quaternion.Euler(curvedRotation);
 
             elapsed += Time.deltaTime;
             yield return null;
@@ -225,19 +231,19 @@ public class CardPicker : MonoBehaviour
     {
         from.IsHoldingStack = false;
         SoundManager.Instance.PlaySFX(_wrongPadAudioClip, _volume);
-        HapticFeedback.LightFeedback();
+        HapticFeedback.MediumFeedback();
         yield return StartCoroutine(ShakePad(to));
     }
 
     private void DoDealCoroutine()
     {
         var dealBtn = _touchController.GetObjectWithType<DealBtn>();
-        var unlockedPads = PadManager.Instance.UnlockedPads;
-        if (dealBtn == null || unlockedPads.Count == 0 || _currentPad?.IsWorking == true) return;
-        StartCoroutine(Deal(dealBtn, unlockedPads));
+        var paidPads = PadManager.Instance.PaidPads;
+        if (dealBtn == null || paidPads.Count == 0 || _currentPad?.IsWorking == true) return;
+        StartCoroutine(Deal(dealBtn, paidPads));
     }
 
-    private IEnumerator Deal(DealBtn dealBtn, List<PlayPad> unlockedPads)
+    private IEnumerator Deal(DealBtn dealBtn, List<PlayPad> paidPads)
     {
         if (_isDealing) yield break;
 
@@ -257,11 +263,11 @@ public class CardPicker : MonoBehaviour
             _currentPad = null;
         }
 
-        int colorLimit = Mathf.Min(unlockedPads.Count, CardUtility.GetTotalColors());
+        int colorLimit = Mathf.Min(paidPads.Count, CardUtility.GetTotalColors());
 
-        for (int i = 0; i < unlockedPads.Count; i++)
+        for (int i = 0; i < paidPads.Count; i++)
         {
-            var pad = unlockedPads[i];
+            var pad = paidPads[i];
             if (pad == null) continue;
 
             var randomAmount = Random.Range(1, 10);
